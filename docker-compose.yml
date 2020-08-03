@@ -63,6 +63,18 @@ services:
     ports:
      - 8083:8083
 
+  people-service:
+    image: springcommunity/spring-petclinic-people-service
+    container_name: people-service
+    mem_limit: 512M
+    depends_on:
+     - mysql-db
+     - config-server
+     - discovery-server
+    entrypoint: ["./dockerize","-wait=tcp://discovery-server:8761","-timeout=60s","--","java", "org.springframework.boot.loader.JarLauncher"]
+    ports:
+     - 8084:8084
+
   api-gateway:
     image: springcommunity/spring-petclinic-api-gateway
     container_name: api-gateway
