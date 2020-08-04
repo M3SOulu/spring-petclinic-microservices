@@ -19,11 +19,12 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.samples.petclinic.people.model.People;
 import org.springframework.samples.petclinic.people.model.PeopleRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /**
  * @author Jianwen Xu
@@ -38,5 +39,14 @@ class PeopleResource {
     @GetMapping
     public List<People> showResourcesPeopleList() {
         return peopleRepository.findAll();
+    }
+
+    /**
+     * Create People
+     */
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public People createPeople(@Valid @RequestBody People people) {
+        return peopleRepository.save(people);
     }
 }

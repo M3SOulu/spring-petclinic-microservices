@@ -21,7 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.samples.petclinic.customers.model.Owner;
 import org.springframework.samples.petclinic.customers.model.OwnerRepository;
+import org.springframework.samples.petclinic.customers.model.People;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -49,6 +51,13 @@ class OwnerResource {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Owner createOwner(@Valid @RequestBody Owner owner) {
+        final String uri = "http://people-service:8084/people";
+        RestTemplate restTemplate = new RestTemplate();
+        People people = new People();
+        people.setFirstName(owner.getFirstName());
+        people.setLastName(owner.getLastName());
+        People result = restTemplate.postForObject( uri, people, People.class);
+        log.info("Saving people {}", result);
         return ownerRepository.save(owner);
     }
 
