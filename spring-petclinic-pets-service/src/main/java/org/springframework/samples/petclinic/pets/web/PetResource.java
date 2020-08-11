@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.samples.petclinic.customers.web;
+package org.springframework.samples.petclinic.pets.web;
 
 import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.samples.petclinic.customers.model.*;
+import org.springframework.samples.petclinic.pets.model.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * @author Juergen Hoeller
- * @author Ken Krebs
- * @author Arjen Poutsma
- * @author Maciej Szarlinski
+ * @author Jianwen Xu
  */
 @RestController
 @Timed("petclinic.pet")
@@ -38,7 +35,6 @@ import java.util.Optional;
 class PetResource {
 
     private final PetRepository petRepository;
-    private final OwnerRepository ownerRepository;
 
 
     @GetMapping("/petTypes")
@@ -53,14 +49,11 @@ class PetResource {
         @PathVariable("ownerId") int ownerId) {
 
         final Pet pet = new Pet();
-        final Optional<Owner> optionalOwner = ownerRepository.findById(ownerId);
-        Owner owner = optionalOwner.orElseThrow(() -> new ResourceNotFoundException("Owner "+ownerId+" not found"));
-        owner.addPet(pet);
-
+        pet.setOwner(ownerId);
         return save(pet, petRequest);
     }
 
-    @PutMapping("/owners/*/pets/{petId}")
+    @PutMapping("/pets/{petId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void processUpdateForm(@RequestBody PetRequest petRequest) {
         int petId = petRequest.getId();
@@ -80,7 +73,7 @@ class PetResource {
         return petRepository.save(pet);
     }
 
-    @GetMapping("owners/*/pets/{petId}")
+    @GetMapping("/pets/{petId}")
     public PetDetails findPet(@PathVariable("petId") int petId) {
         return new PetDetails(findPetById(petId));
     }

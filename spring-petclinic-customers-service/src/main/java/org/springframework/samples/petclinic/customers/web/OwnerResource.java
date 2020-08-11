@@ -19,15 +19,15 @@ import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.samples.petclinic.customers.model.Owner;
-import org.springframework.samples.petclinic.customers.model.OwnerRepository;
-import org.springframework.samples.petclinic.customers.model.People;
+import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.customers.model.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+import java.util.Arrays;
 
 /**
  * @author Juergen Hoeller
@@ -44,6 +44,8 @@ import java.util.Optional;
 class OwnerResource {
 
     private final OwnerRepository ownerRepository;
+    private final String peopleHost = "http://people-service:8084";
+    private final String petsHost = "http://pets-service:8085";
 
     /**
      * Create Owner
@@ -51,7 +53,7 @@ class OwnerResource {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Owner createOwner(@Valid @RequestBody Owner owner) {
-        final String uri = "http://people-service:8084/people";
+        final String uri = peopleHost + "/people";
         RestTemplate restTemplate = new RestTemplate();
         People people = new People();
         people.setFirstName(owner.getFirstName());
@@ -94,5 +96,43 @@ class OwnerResource {
         ownerModel.setTelephone(ownerRequest.getTelephone());
         log.info("Saving owner {}", ownerModel);
         ownerRepository.save(ownerModel);
+    }
+
+    @GetMapping("/petTypes")
+    public List<PetType> getPetTypes() {
+        final String uri = petsHost + "/petTypes";
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<PetType[]> responseEntity = restTemplate.getForEntity( uri, PetType[].class);
+        List<PetType> result = Arrays.asList(responseEntity.getBody());
+        return result;
+    }
+
+    @PostMapping("/owners/{ownerId}/pets")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Pet processCreationForm(
+        @RequestBody PetRequest petRequest,
+        @PathVariable("ownerId") String ownerId) {
+
+        final String uri = petsHost + "/owners/" + ownerId + "/pets";
+        RestTemplate restTemplate = new RestTemplate();
+        Pet result = restTemplate.postForObject( uri, petRequest, Pet.class);
+        log.info("Saving pets {}", result);
+        return result;
+    }
+
+    @PutMapping("/owners/*/pets/{petId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void processUpdateForm(@RequestBody PetRequest petRequest, @PathVariable("petId") int petId) {
+        final String uri = petsHost + "/pets/" + petId;
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.put( uri, petRequest);
+    }
+
+    @GetMapping("/owners/*/pets/{petId}")
+    public PetDetails findPet(@PathVariable("petId") int petId) {
+        final String uri = petsHost + "/pets/" + petId;
+        RestTemplate restTemplate = new RestTemplate();
+        PetDetails result = restTemplate.getForObject( uri, PetDetails.class);
+        return result;
     }
 }

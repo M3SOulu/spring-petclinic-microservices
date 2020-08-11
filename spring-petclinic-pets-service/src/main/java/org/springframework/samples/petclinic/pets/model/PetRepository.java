@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.samples.petclinic.customers.model;
+package org.springframework.samples.petclinic.pets.model;
 
 import java.util.List;
 import java.util.Optional;
