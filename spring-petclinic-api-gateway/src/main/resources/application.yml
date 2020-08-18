@@ -23,3 +23,9 @@ spring:
             - Path=/api/customer/**
           filters:
             - StripPrefix=2
+        - id: pets-service
+          uri: lb://pets-service
+          predicates:
+            - Path=/api/pet/**
+          filters:
+            - StripPrefix=2

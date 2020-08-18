@@ -49,7 +49,6 @@ class PetResource {
         @PathVariable("ownerId") int ownerId) {
 
         final Pet pet = new Pet();
-        pet.setOwner(ownerId);
         return save(pet, petRequest);
     }
 

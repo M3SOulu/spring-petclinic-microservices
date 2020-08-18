@@ -34,7 +34,10 @@ import org.springframework.core.style.ToStringCreator;
 /**
  * Simple business object representing a pet.
  *
- * @author Jianwen Xu
+ * @author Ken Krebs
+ * @author Juergen Hoeller
+ * @author Sam Brannen
+ * @author Maciej Szarlinski
  */
 @Entity
 @Table(name = "pets")
@@ -57,7 +60,7 @@ public class Pet {
     @ManyToOne
     @JoinColumn(name = "owner_id")
     @JsonIgnore
-    private Integer owner;
+    private Owner owner;
 
     public Integer getId() {
         return id;
@@ -91,11 +94,11 @@ public class Pet {
         this.type = type;
     }
 
-    public Integer getOwner() {
+    public Owner getOwner() {
         return owner;
     }
 
-    public void setOwner(final Integer owner) {
+    public void setOwner(final Owner owner) {
         this.owner = owner;
     }
 
@@ -106,6 +109,8 @@ public class Pet {
             .append("name", this.getName())
             .append("birthDate", this.getBirthDate())
             .append("type", this.getType().getName())
+            .append("ownerFirstname", this.getOwner().getFirstName())
+            .append("ownerLastname", this.getOwner().getLastName())
             .toString();
     }
 
