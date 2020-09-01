@@ -29,12 +29,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Arrays;
 
+import org.togglz.core.*;
+
 /**
  * @author Juergen Hoeller
  * @author Ken Krebs
  * @author Arjen Poutsma
  * @author Michael Isvy
  * @author Maciej Szarlinski
+ * @author Jianwen Xu
  */
 @RequestMapping("/owners")
 @RestController
@@ -46,6 +49,7 @@ class OwnerResource {
     private final OwnerRepository ownerRepository;
     private final String peopleHost = "http://people-service:8084";
     private final String petsHost = "http://pets-service:8085";
+    private final FeatureManager manager;
 
     /**
      * Create Owner
@@ -53,13 +57,15 @@ class OwnerResource {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Owner createOwner(@Valid @RequestBody Owner owner) {
-        final String uri = peopleHost + "/people";
-        RestTemplate restTemplate = new RestTemplate();
-        People people = new People();
-        people.setFirstName(owner.getFirstName());
-        people.setLastName(owner.getLastName());
-        People result = restTemplate.postForObject( uri, people, People.class);
-        log.info("Saving people {}", result);
+        if(manager.isActive(CALL_PEOPLE_SERVICE)){
+            final String uri = peopleHost + "/people";
+            RestTemplate restTemplate = new RestTemplate();
+            People people = new People();
+            people.setFirstName(owner.getFirstName());
+            people.setLastName(owner.getLastName());
+            People result = restTemplate.postForObject( uri, people, People.class);
+            log.info("Saving people {}", result);
+        }
         return ownerRepository.save(owner);
     }
 
