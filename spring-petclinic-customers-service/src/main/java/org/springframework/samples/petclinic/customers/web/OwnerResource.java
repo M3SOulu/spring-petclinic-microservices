@@ -29,7 +29,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Arrays;
 
-import org.togglz.core.*;
+import org.togglz.core.Feature;
+import org.togglz.core.util.NamedFeature;
+import org.togglz.core.manager.FeatureManager;
 
 /**
  * @author Juergen Hoeller
@@ -57,7 +59,7 @@ class OwnerResource {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Owner createOwner(@Valid @RequestBody Owner owner) {
-        if(manager.isActive(CALL_PEOPLE_SERVICE)){
+        if(manager.isActive(new NamedFeature("CALL_PEOPLE_SERVICE"))){
             final String uri = peopleHost + "/people";
             RestTemplate restTemplate = new RestTemplate();
             People people = new People();
