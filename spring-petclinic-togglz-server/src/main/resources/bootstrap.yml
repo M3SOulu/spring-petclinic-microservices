@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    config:
+      uri: http://localhost:9999
+  application:
+    name: togglz-server
+---
+spring:
+  profiles: docker
+  cloud:
+    config:
+      uri: http://togglz-server:9999
