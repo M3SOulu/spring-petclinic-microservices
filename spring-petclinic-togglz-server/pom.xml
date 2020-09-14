@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.springframework.samples.petclinic.admin</groupId>
+    <groupId>org.springframework.samples.petclinic.togglz</groupId>
     <artifactId>spring-petclinic-togglz-server</artifactId>
     <packaging>jar</packaging>
-    <description>Spring Boot Admin server</description>
+    <description>Togglz server</description>
 
     <parent>
         <groupId>org.springframework.samples</groupId>
@@ -40,6 +40,12 @@
         <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-spring-boot-starter</artifactId>
+            <version>2.6.1.Final</version>
+        </dependency>
+        <!-- Togglz for Servlet environments (mandatory for webapps) -->
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-servlet</artifactId>
             <version>2.6.1.Final</version>
         </dependency>
         <!-- Togglz Admin Console (optional) -->

@@ -25,6 +25,7 @@
         <module>spring-petclinic-api-gateway</module>
         <module>spring-petclinic-people-service</module>
         <module>spring-petclinic-pets-service</module>
+        <module>spring-petclinic-togglz-server</module>
     </modules>
 
     <properties>
